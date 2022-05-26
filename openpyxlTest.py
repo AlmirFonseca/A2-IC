@@ -1,5 +1,9 @@
+
 from openpyxl import Workbook
 from openpyxl.styles.alignment import Alignment
+from openpyxl.drawing.image import Image
+
+import qrcodeGenerator
 
 import random
 
@@ -12,6 +16,9 @@ def col_adjust(column_value_without_offset):
 # Cria um Workbook
 wb = Workbook()
 
+# Worksheet "Dashboard"
+###############################################################################
+
 # Aponta para a Worksheet ativa
 ws = wb.active
 # Acessa o atributo "title" da worksheet e o altera, renomeando a planilha
@@ -23,6 +30,8 @@ header = ["Nome", "Código/Ticker", "Quantidade", "Valor unitário", "Valor Tota
 
 financial_data = [["StoneCro Ltd.", "STNE", 22, 9.23, 203.06],
         ["Amazon.com, Inc", "AMZN", 2, 2127.07, 4252.14]]
+
+wallet_value = 186.45
 
 # Define o número de linhas e colunas a serem "puladas" a partir do início da worksheet
 row_offset = 1
@@ -40,6 +49,26 @@ for head in header:
 for row_num, row_content in enumerate(financial_data):
     for data in row_content:
         ws.cell(row=row_adjust(row_num+3), column=col_adjust(row_content.index(data)+1), value=data)
+        
+# Worksheet "QR Code"
+###############################################################################
+# Gera um QR Code a partir do "wallet_value" e retorna o caminho até o arquivo gerado
+qrcode_path = qrcodeGenerator.gerar_qrcode(wallet_value)
+
+# Cria uma nova Worksheet chamada "QR Code"
+ws = wb.create_sheet(title="QR Code")
+
+# Retira a exibição das linhas de grade
+ws.sheet_view.showGridLines = False
+
+# Imprime um texto na célula de coordenadas (2, 2) -> B2
+ws.cell(2, 2, value= "Aponte a câmera do celular para o QR Code abaixo e confira o valor total da sua carteira:")
+
+# Abre a imagem gerada que contém o QR code
+img = Image(qrcode_path)
+
+# Adiciona a imagem à tabela, ancorada sobre a célula de coordenadas (4, 3) -> C4
+ws.add_image(img, ws.cell(4, 3).coordinate)
 
 filename = "./rascunhos/Teste-" + str(random.randint(1, 10000)) + ".xlsx"
 # Salva o arquivo
@@ -47,3 +76,4 @@ wb.save(filename)
 
 
 # DECIDIR ENTRE OS DOIS MODELOS DE DICT E, CONSEQUENTEMENTE, ENTRE UM OUTPUT COM 1 OU 2 TABELAS
+# PROTEGER A TABELA?
