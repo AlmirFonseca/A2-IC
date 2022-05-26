@@ -3,6 +3,12 @@ from openpyxl.styles.alignment import Alignment
 
 import random
 
+def row_adjust(row_value_without_offset):
+    return row_value_without_offset + row_offset
+
+def col_adjust(column_value_without_offset):
+    return column_value_without_offset + column_offset
+
 # Cria um Workbook
 wb = Workbook()
 
@@ -23,17 +29,17 @@ row_offset = 1
 column_offset = 1
 
 # Cria o cabeçalho de uma tabela
-ws.merge_cells(start_row=row_offset+1, start_column=column_offset+1, end_row=row_offset+1, end_column=column_offset+len(header)) # Merge as células imediatamente acima da tabela
-ws.cell(row=row_offset+1, column=column_offset+1, value="Ativos") # Define o texto da célula
-ws.cell(row=row_offset+1, column=column_offset+1).alignment = Alignment(horizontal="center") # Centraliza o conteúdo
+ws.merge_cells(start_row=row_adjust(1), start_column=col_adjust(1), end_row=row_adjust(1), end_column=col_adjust(len(header))) # Merge as células imediatamente acima da tabela
+ws.cell(row=row_adjust(1), column=col_adjust(1), value="Ativos") # Define o texto da célula
+ws.cell(row=row_adjust(1), column=col_adjust(1)).alignment = Alignment(horizontal="center") # Centraliza o conteúdo
 
 for head in header:
-    ws.cell(row=row_offset+2, column=header.index(head)+column_offset+1, value=head)
+    ws.cell(row=row_adjust(2), column=col_adjust(header.index(head)+1), value=head)
 
 # Transcreve uma lista de listas para a worksheet
 for row_num, row_content in enumerate(financial_data):
     for data in row_content:
-        ws.cell(row=row_num+row_offset+3, column=row_content.index(data)+column_offset+1, value=data)
+        ws.cell(row=row_adjust(row_num+3), column=col_adjust(row_content.index(data)+1), value=data)
 
 filename = "./rascunhos/Teste-" + str(random.randint(1, 10000)) + ".xlsx"
 # Salva o arquivo
