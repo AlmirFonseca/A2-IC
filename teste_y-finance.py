@@ -13,23 +13,31 @@ import pandas as pd
 
 #ticker de moeda e ticker de ação
 
-carteira = {
-    1:{
+#função para encontrar o current price da ação <regularMarketPrice>
+
+'''
+carteira_modelo = {
+    AMZN:{
         "ticker": "AMZN",
         "quantidade": 10,
-        "tipo": "ação"
+        "tipo": "Ação",
+        "nome": "Amazon.com, Inc.",
+        "valor_unitário": 1254,
+        "valor_total": 12540
     }, 
-    2:{
+    STNE:{
         "ticker": "STNE",
         "quantidade": 20,
-        "tipo": "ação"
-    },   
-    3:{
-        "ticker": "USD/BRL=X",
-        "quantidade": 1000,
-        "tipo": "moeda"
-    }    
+        "tipo": "Ação",
+        "nome": "StoneCo Ltd.",
+        "valor_unitário": 1254,
+        "valor_total": 25080,
+    },      
 }
+'''
+
+
+
 
 '''
 while contador < quantidade_moeda:
