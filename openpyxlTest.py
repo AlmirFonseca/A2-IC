@@ -26,10 +26,10 @@ ws.title = "Dashboard"
 
 # Para uma pessoa com 22 ações de 9.23 dólares da stone, que valem 22x9.23=203,06:
 # E algo semelhante em relação à amazon
-header = ["Nome", "Código/Ticker", "Quantidade", "Valor unitário", "Valor Total"]
+header = ["Nome", "Código/Ticker", "Tipo", "Quantidade", "Valor unitário", "Valor Total"]
 
-financial_data = [["StoneCro Ltd.", "STNE", 22, 9.23, 203.06],
-        ["Amazon.com, Inc", "AMZN", 2, 2127.07, 4252.14]]
+financial_data = [["StoneCro Ltd.", "STNE", "Ação", 22, 9.23, 203.06],
+        ["Amazon.com, Inc", "AMZN", "Ação", 2, 2127.07, 4252.14]]
 
 wallet_value = 186.45
 
@@ -49,6 +49,8 @@ for head in header:
 for row_num, row_content in enumerate(financial_data):
     for data in row_content:
         ws.cell(row=row_adjust(row_num+3), column=col_adjust(row_content.index(data)+1), value=data)
+        
+
         
 # Worksheet "QR Code"
 ###############################################################################
