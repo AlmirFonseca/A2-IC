@@ -59,6 +59,13 @@ for row_num, row_content in enumerate(financial_data):
 # Ajusta a largura das colunas da tabela segundo os valores da lista "column_widths"
 for i, column_width in enumerate(column_widths, col_adjust(1)):
     ws.column_dimensions[get_column_letter(i)].width = column_width
+
+# Imprime o valor total da carteira
+ws.merge_cells(start_row=row_adjust(len(financial_data)+3), start_column=col_adjust(1), end_row=row_adjust(len(financial_data)+3), end_column=col_adjust(len(header)-1)) # Merge as células imediatamente acima da tabela
+ws.cell(row=row_adjust(len(financial_data)+3), column=col_adjust(1), value="Valor total da carteira") # Define o texto da célula
+ws.cell(row=row_adjust(len(financial_data)+3), column=col_adjust(1)).alignment = Alignment(horizontal="center") # Centraliza o conteúdo
+
+ws.cell(row=row_adjust(len(financial_data)+3), column=col_adjust(len(header)), value=wallet_value)
         
 # Worksheet "QR Code"
 ###############################################################################
