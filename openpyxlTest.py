@@ -2,14 +2,17 @@
 from openpyxl import Workbook
 from openpyxl.styles.alignment import Alignment
 from openpyxl.drawing.image import Image
+from openpyxl.utils import get_column_letter
 
 import qrcodeGenerator
 
 import random
 
+# Translada a origem das linhas da tabela segundo o valor definido por "row_offset"
 def row_adjust(row_value_without_offset):
     return row_value_without_offset + row_offset
 
+# Translada a origem das colunas da tabela segundo o valor definido por "column_offset"
 def col_adjust(column_value_without_offset):
     return column_value_without_offset + column_offset
 
@@ -27,6 +30,9 @@ ws.title = "Dashboard"
 # Para uma pessoa com 22 ações de 9.23 dólares da stone, que valem 22x9.23=203,06:
 # E algo semelhante em relação à amazon
 header = ["Nome", "Código/Ticker", "Tipo", "Quantidade", "Valor unitário", "Valor Total"]
+
+# Lista das larguras de cada coluna da tabela
+column_widths = [40, 15, 15, 15, 15, 15]
 
 financial_data = [["StoneCro Ltd.", "STNE", "Ação", 22, 9.23, 203.06],
         ["Amazon.com, Inc", "AMZN", "Ação", 2, 2127.07, 4252.14]]
@@ -49,8 +55,10 @@ for head in header:
 for row_num, row_content in enumerate(financial_data):
     for data in row_content:
         ws.cell(row=row_adjust(row_num+3), column=col_adjust(row_content.index(data)+1), value=data)
-        
 
+# Ajusta a largura das colunas da tabela segundo os valores da lista "column_widths"
+for i, column_width in enumerate(column_widths, col_adjust(1)):
+    ws.column_dimensions[get_column_letter(i)].width = column_width
         
 # Worksheet "QR Code"
 ###############################################################################
