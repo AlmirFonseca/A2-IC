@@ -34,10 +34,30 @@ header = ["Nome", "Código/Ticker", "Tipo", "Quantidade", "Valor unitário", "Va
 # Lista das larguras de cada coluna da tabela
 column_widths = [40, 15, 15, 15, 15, 15]
 
-financial_data = [["StoneCro Ltd.", "STNE", "Ação", 22, 9.23, 203.06],
-        ["Amazon.com, Inc", "AMZN", "Ação", 2, 2127.07, 4252.14]]
-
-wallet_value = 186.45
+# Exemplo da estrutura de uma carteira
+carteira = {
+    "AMZN":{
+        "ticker": "AMZN",
+        "quantidade": 10,
+        "tipo": "Ação",
+        "nome": "Amazon.com, Inc.",
+        "valor_unitario": 2221.55
+    }, 
+    "STNE":{
+        "ticker": "STNE",
+        "quantidade": 20,
+        "tipo": "Ação",
+        "nome": "StoneCo Ltd.",
+        "valor_unitario": 9.71
+    },   
+    "BRL=X":{
+        "ticker": "BRL=X",
+        "quantidade": 1000,
+        "tipo": "Moeda",
+        "nome": "USD/BRL",
+        "valor_unitario": 4.763
+    }    
+}
 
 # Define o número de linhas e colunas a serem "puladas" a partir do início da worksheet
 row_offset = 1
@@ -48,29 +68,46 @@ ws.merge_cells(start_row=row_adjust(1), start_column=col_adjust(1), end_row=row_
 ws.cell(row=row_adjust(1), column=col_adjust(1), value="Ativos") # Define o texto da célula
 ws.cell(row=row_adjust(1), column=col_adjust(1)).alignment = Alignment(horizontal="center") # Centraliza o conteúdo
 
+# Preenche o cabeçalho da tabela a partir da lista "header"
 for head in header:
     ws.cell(row=row_adjust(2), column=col_adjust(header.index(head)+1), value=head)
 
-# Transcreve uma lista de listas para a worksheet
-for row_num, row_content in enumerate(financial_data):
-    for data in row_content:
-        ws.cell(row=row_adjust(row_num+3), column=col_adjust(row_content.index(data)+1), value=data)
+# Inicializa uma variável que acumulará o valor total da carteira
+valor_total_carteira = 0
+
+# Itera entre os ativos das certeiras
+for row_num, data_ativo in enumerate(carteira.values(), 3):
+    #Calcula o valor total referente a cada ativo e o adiciona ao dicionário
+    valor_total_ativo = data_ativo.get("quantidade") * data_ativo.get("valor_unitario")
+    data_ativo.update({"valor_total_ativo": valor_total_ativo})
+
+    # Acumula o valor total da carteira
+    valor_total_carteira += valor_total_ativo
+
+    # Transcreve os itens do dicionario para a tabela
+    ws.cell(row=row_adjust(row_num), column=col_adjust(1), value=data_ativo.get("nome"))
+    ws.cell(row=row_adjust(row_num), column=col_adjust(2), value=data_ativo.get("ticker"))
+    ws.cell(row=row_adjust(row_num), column=col_adjust(3), value=data_ativo.get("tipo"))
+    ws.cell(row=row_adjust(row_num), column=col_adjust(4), value=data_ativo.get("quantidade"))
+    ws.cell(row=row_adjust(row_num), column=col_adjust(5), value=data_ativo.get("valor_unitario"))
+    ws.cell(row=row_adjust(row_num), column=col_adjust(6), value=data_ativo.get("valor_total_ativo"))    
 
 # Ajusta a largura das colunas da tabela segundo os valores da lista "column_widths"
 for i, column_width in enumerate(column_widths, col_adjust(1)):
     ws.column_dimensions[get_column_letter(i)].width = column_width
 
-# Imprime o valor total da carteira
-ws.merge_cells(start_row=row_adjust(len(financial_data)+3), start_column=col_adjust(1), end_row=row_adjust(len(financial_data)+3), end_column=col_adjust(len(header)-1)) # Merge as células imediatamente acima da tabela
-ws.cell(row=row_adjust(len(financial_data)+3), column=col_adjust(1), value="Valor total da carteira") # Define o texto da célula
-ws.cell(row=row_adjust(len(financial_data)+3), column=col_adjust(1)).alignment = Alignment(horizontal="center") # Centraliza o conteúdo
+# Prepara a última linha da tabela
+ws.merge_cells(start_row=row_adjust(len(carteira)+3), start_column=col_adjust(1), end_row=row_adjust(len(carteira)+3), end_column=col_adjust(len(header)-1)) # Merge as células imediatamente acima da tabela
+ws.cell(row=row_adjust(len(carteira)+3), column=col_adjust(1), value="Valor total da carteira") # Define o texto da célula
+ws.cell(row=row_adjust(len(carteira)+3), column=col_adjust(1)).alignment = Alignment(horizontal="center") # Centraliza o conteúdo
 
-ws.cell(row=row_adjust(len(financial_data)+3), column=col_adjust(len(header)), value=wallet_value)
+# Imprime o valor total da carteira
+ws.cell(row=row_adjust(len(carteira)+3), column=col_adjust(len(header)), value=valor_total_carteira)
         
 # Worksheet "QR Code"
 ###############################################################################
-# Gera um QR Code a partir do "wallet_value" e retorna o caminho até o arquivo gerado
-qrcode_path = qrcodeGenerator.gerar_qrcode(wallet_value)
+# Gera um QR Code a partir do "valor_total_carteira" e retorna o caminho até o arquivo gerado
+qrcode_path = qrcodeGenerator.gerar_qrcode(valor_total_carteira)
 
 # Cria uma nova Worksheet chamada "QR Code"
 ws = wb.create_sheet(title="QR Code")
