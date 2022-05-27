@@ -32,7 +32,7 @@ ws.title = "Dashboard"
 header = ["Nome", "Código/Ticker", "Tipo", "Quantidade", "Valor unitário", "Valor Total"]
 
 # Lista das larguras de cada coluna da tabela
-column_widths = [40, 15, 15, 15, 15, 15]
+column_widths = [40, 15, 15, 15, 25, 25]
 
 # Exemplo da estrutura de uma carteira
 carteira = {
@@ -84,13 +84,13 @@ for row_num, data_ativo in enumerate(carteira.values(), 3):
     # Acumula o valor total da carteira
     valor_total_carteira += valor_total_ativo
 
-    # Transcreve os itens do dicionario para a tabela
+    # Transcreve os itens do dicionario para a tabela, ajustando também o formato de exibição dos valores monetários
     ws.cell(row=row_adjust(row_num), column=col_adjust(1), value=data_ativo.get("nome"))
     ws.cell(row=row_adjust(row_num), column=col_adjust(2), value=data_ativo.get("ticker"))
     ws.cell(row=row_adjust(row_num), column=col_adjust(3), value=data_ativo.get("tipo"))
     ws.cell(row=row_adjust(row_num), column=col_adjust(4), value=data_ativo.get("quantidade"))
-    ws.cell(row=row_adjust(row_num), column=col_adjust(5), value=data_ativo.get("valor_unitario"))
-    ws.cell(row=row_adjust(row_num), column=col_adjust(6), value=data_ativo.get("valor_total_ativo"))    
+    ws.cell(row=row_adjust(row_num), column=col_adjust(5), value=round(data_ativo.get("valor_unitario"), 2)).number_format = "R$ #,###.00"
+    ws.cell(row=row_adjust(row_num), column=col_adjust(6), value=round(data_ativo.get("valor_total_ativo"), 2)).number_format = "R$ #,###.00"
 
 # Ajusta a largura das colunas da tabela segundo os valores da lista "column_widths"
 for i, column_width in enumerate(column_widths, col_adjust(1)):
@@ -102,7 +102,7 @@ ws.cell(row=row_adjust(len(carteira)+3), column=col_adjust(1), value="Valor tota
 ws.cell(row=row_adjust(len(carteira)+3), column=col_adjust(1)).alignment = Alignment(horizontal="center") # Centraliza o conteúdo
 
 # Imprime o valor total da carteira
-ws.cell(row=row_adjust(len(carteira)+3), column=col_adjust(len(header)), value=valor_total_carteira)
+ws.cell(row=row_adjust(len(carteira)+3), column=col_adjust(len(header)), value=round((valor_total_carteira), 2)).number_format = "R$ #,###.00"
         
 # Worksheet "QR Code"
 ###############################################################################
