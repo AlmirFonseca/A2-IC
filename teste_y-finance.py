@@ -11,41 +11,58 @@ import pandas as pd
 
 #não consegui lidar com as moedas ainda
 
+#ticker de moeda e ticker de ação
 
-quantidade_moeda = int(input("Quantidade de moedas: "))
-dict_data = {'moeda': [], 'ticker': []}
-contador = 0
+carteira = {
+    1:{
+        "ticker": "AMZN",
+        "quantidade": 10,
+        "tipo": "ação"
+    }, 
+    2:{
+        "ticker": "STNE",
+        "quantidade": 20,
+        "tipo": "ação"
+    },   
+    3:{
+        "ticker": "USD/BRL=X",
+        "quantidade": 1000,
+        "tipo": "moeda"
+    }    
+}
 
+'''
 while contador < quantidade_moeda:
-    tipo_moeda = input("Insira o tipo da moeda: ")
-    dict_data['moeda'].append(tipo_moeda)
+    tipo_moeda = input("Insira o ticker das moedas: ")
+    dict_dado['moeda'].append(tipo_moeda)
     contador+=1
 
 contador = 0
 
-quantidade_ticker = int(input("Quantidade de tickers: "))
+quantidade_ticker = int(input("Quantidade de tipos de ação: "))
 while contador < quantidade_ticker:
-    tipo_ticker = input("Insira o tipo de ticker: ")
-    dict_data['ticker'].append(tipo_ticker)
+    tipo_ticker = input("Insira o ticker das ações: ")
+    dict_dado['ticker'].append(tipo_ticker)
     contador+=1
 
 contador = 0
 
-print(dict_data)
+print(dict_dado)
 
 while contador < quantidade_ticker:
-    ticker = yf.Ticker(dict_data['ticker'][contador])
+    ticker = yf.Ticker(dict_dado['ticker'][contador])
     ticker_historical = ticker.history(start="2022-05-05", end="2022-06-05", interval="1d")
     print(ticker_historical)
     contador+=1
 
 contador = 0
-
 
 #possível código para moedas
 
 while contador < quantidade_moeda:
-    ticker = yf.Ticker(dict_data['moeda'][contador])
+    ticker = yf.Ticker(dict_dado['moeda'][contador])
     ticker_historical = ticker.history(start="2022-05-05", end="2022-06-05", interval="1d")
     print(ticker_historical)
     contador+=1
+
+'''
