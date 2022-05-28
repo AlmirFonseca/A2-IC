@@ -16,6 +16,8 @@ from yahooquery import Ticker
 #função para encontrar o current price da ação <regularMarketPrice>
 
 #carteira_modelo final
+
+
 '''
 carteira_modelo = {
     AMZN:{
@@ -64,7 +66,7 @@ dict_tickers_dados = info_tickers.price
 
 #looping para acessar os dados necessários através dos dicionário e atualizando o modelo para ser utilizado no próximo passo do projeto
 for ticker in lista_nomes:
-    nome_ticker = dict_tickers_dados[ticker]['longName']
+    nome_ticker = dict_tickers_dados[ticker]['shortName']
     valor_atualizado = dict_tickers_dados[ticker]['regularMarketPrice']
     valor_total = valor_atualizado * carteira_modelo[ticker]["quantidade"]
     dict_novo_dados = {"nome": nome_ticker, "valor_unitario": valor_atualizado, "valor_total": valor_total}
