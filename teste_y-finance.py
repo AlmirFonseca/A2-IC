@@ -1,4 +1,3 @@
-from tkinter import N
 import yfinance as yf
 import pandas as pd
 from yahooquery import Ticker
@@ -16,6 +15,10 @@ from yahooquery import Ticker
 #função para encontrar o current price da ação <regularMarketPrice>
 
 #carteira_modelo final
+
+#histórico das ações: 1 ano de período, e 1 dia de intervalo, entregar valor de fechamento em um df separado
+
+#arquivo.txt "requirements" para a instalação das bibliotecas por pip install -requirements
 
 
 '''
@@ -38,6 +41,7 @@ carteira_modelo = {
     },      
 }
 '''
+
 #carteira_modelo inicial
 carteira_modelo = {
     "AMZN":{
@@ -74,4 +78,9 @@ for ticker in lista_nomes:
 
 print(carteira_modelo)
 
+#resgatando os dados na forma de um dataframe de cada ticker
+dados_historico = yf.download(lista_nomes, period = "1y", interval="1d")
+dados_historico = dados_historico["Close"]
 
+print(dados_historico.columns)
+print(dados_historico)
