@@ -62,7 +62,7 @@ carteira_modelo = {
         "quantidade": 10,
         "tipo": "Ação",
     },
-    "STNE":{
+    " ":{
         "ticker": "STNE",
         "quantidade": 20,
         "tipo": "Ação",
@@ -106,7 +106,10 @@ for ticker in lista_nomes:
 print(carteira_modelo)
 
 #resgatando os dados na forma de um dataframe de cada ticker
-dados_historico = yf.download(list(carteira_modelo.keys()), period = "1y", interval="1d")
 
-print(dados_historico.columns)
-print(dados_historico)
+if carteira_modelo == {}:
+    print("dicionario vazio")
+else:
+    dados_historico = yf.download(list(carteira_modelo.keys()), period = "1y", interval="1d")
+    print(dados_historico.columns)
+    print(dados_historico)
