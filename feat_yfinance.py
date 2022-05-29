@@ -9,7 +9,7 @@ from yahooquery import Ticker
 def analisar_carteira(carteira):
     #listando as chaves do dicionario
     lista_tickers = list(carteira.keys())
-    
+
     #transformando a lista de chaves em string
     string_tickers = " ".join(lista_tickers)
 
@@ -23,6 +23,7 @@ def analisar_carteira(carteira):
     for ticker in lista_tickers:
         try:
             nome_ticker = dict_tickers_dados[ticker]['shortName'] #KeyError nessa linha quando a chave estiver vazia! #TypeError para nome inválido!
+            valor_atualizado = dict_tickers_dados[ticker]['regularMarketPrice']
         except KeyError:
             del carteira[ticker] #deletar parte do dicionário afetada
             continue
@@ -33,26 +34,26 @@ def analisar_carteira(carteira):
             #caso não ocorra erros será executado normalmente
             nome_ticker = dict_tickers_dados[ticker]['shortName']
             valor_atualizado = dict_tickers_dados[ticker]['regularMarketPrice']
-            valor_total = valor_atualizado * carteira[ticker]["quantidade"]
+            valor_total = float(valor_atualizado) * float(carteira[ticker]["quantidade"])
             dict_novo_dados = {"nome": nome_ticker, "valor_unitario": valor_atualizado, "valor_total": valor_total}
             carteira[ticker].update(dict_novo_dados)
 
 def obter_historico_ativos(carteira):
     if carteira == {}:
         return("Carteira vazia!")
-    
+
     #listando as chaves do dicionario
     lista_tickers = list(carteira.keys())
-    
+
     #contando o número chaves
     numero_tickers = len(carteira.keys())
-    
+
     #resgatando os dados na forma de um dataframe de cada ticker
     data_download = yf.download(lista_tickers, period = "1y", interval="1d", progress=False)
-    
+
     #criando um novo dataframe com on índices do antigo
     dados_historico = pd.DataFrame(index=data_download.index)
-    
+
     #preenchendo o novo dataframe com as colunas do antigo
     if numero_tickers == 1: #se houver apenas 1 ticker
         for ticker in lista_tickers:
@@ -60,55 +61,35 @@ def obter_historico_ativos(carteira):
     elif numero_tickers > 1: #se houver mais de 2 tickers
         for ticker in lista_tickers:
             dados_historico[ticker] = data_download["Close"][ticker] #o acesso se dá através de 2 chaves
-            
+
     return dados_historico
 
-'''
-carteira_modelo = {
-    "AMZN":{
-        "ticker": "AMZN",
-        "quantidade": 10,
-        "tipo": "Ação",
-        "nome": "Amazon.com, Inc.", 
-        "valor_unitario": 1254,
-        "valor_total": 12540
-    }, 
-    "STNE":{
-        "ticker": "STNE",
-        "quantidade": 20,
-        "tipo": "Ação",
-        "nome": "StoneCo Ltd.", 
-        "valor_unitario": 1254,
-        "valor_total": 25080,
-    },      
-}
-'''
-
+## Testando
 #carteira_modelo para testes
-carteira_modelo = {
-    "  ":{
-        "ticker": "AMZN",
-        "quantidade": 10,
-        "tipo": "Ação",
-    }, 
-    "asdfakjsdkfkajsdf":{
-        "ticker": "STNE",
-        "quantidade": 20,
-        "tipo": "Ação",
-    },
-    " ":{
-        "ticker": "AMZN",
-        "quantidade": 10,
-        "tipo": "Ação",
-    },
-    " asdsadf ":{
-        "ticker": "STNE",
-        "quantidade": 20,
-        "tipo": "Ação",
-    },
-}
-
-analisar_carteira(carteira_modelo)
-
-print(carteira_modelo)
-print(obter_historico_ativos(carteira_modelo))
+# carteira_modelo = {
+#     "  ":{
+#         "ticker": "AMZN",
+#         "quantidade": 10,
+#         "tipo": "Ação",
+#     },
+#     "asdfakjsdkfkajsdf":{
+#         "ticker": "STNE",
+#         "quantidade": 20,
+#         "tipo": "Ação",
+#     },
+#     " ":{
+#         "ticker": "AMZN",
+#         "quantidade": 10,
+#         "tipo": "Ação",
+#     },
+#     " asdsadf ":{
+#         "ticker": "STNE",
+#         "quantidade": 20,
+#         "tipo": "Ação",
+#     },
+# }
+#
+# analisar_carteira(carteira_modelo)
+#
+# print(carteira_modelo)
+# print(obter_historico_ativos(carteira_modelo))
