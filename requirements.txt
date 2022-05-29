@@ -5,6 +5,7 @@ colorama==0.4.4
 et-xmlfile==1.1.0
 idna==3.3
 lxml==4.8.0
+matplotlib
 multitasking==0.0.10
 numpy==1.22.4
 openpyxl==3.0.10
