@@ -119,13 +119,13 @@ def inserir_grafico_1(wb, carteira, data_history, valor_total_carteira):
     plt.grid(color="#DCDCDC", axis="y", zorder=0) # Configura a exibição de linhas de grade
     fig.get_legend().remove() # Remove as legendas
     
-    plt.savefig("grafico_1.png", dpi=75, bbox_inches='tight') # Salva o gráfico gerado em "grafico_1.png"
+    plt.savefig("./Imagens/grafico_1.png", dpi=75, bbox_inches='tight') # Salva o gráfico gerado em "grafico_1.png"
     
     # Retira a exibição das linhas de grade da planilha
     ws.sheet_view.showGridLines = False
     
     # Abre a imagem gerada que contém o QR code
-    img = Image("grafico_1.png")
+    img = Image("./Imagens/grafico_1.png")
     
     # Adiciona a imagem à tabela, ancorada sobre a célula de coordenadas (2, 2) -> B2
     ws.add_image(img, ws.cell(2, 2).coordinate)
@@ -155,13 +155,13 @@ def inserir_grafico_2(wb, carteira, data_history):
     plt.legend(loc=(1.02, 0)) # Move a legenda do gráfico para o exterior da área de exibição
     plt.tick_params(which="both", direction="inout") # Edita os marcadores de cada eixo
     
-    plt.savefig("grafico_2.png", dpi=75, bbox_inches='tight') # Salva o gráfico gerado em "grafico_1.png"
+    plt.savefig("./Imagens/grafico_2.png", dpi=75, bbox_inches='tight') # Salva o gráfico gerado em "grafico_1.png"
     
     # Retira a exibição das linhas de grade da planilha
     ws.sheet_view.showGridLines = False
     
     # Abre a imagem gerada que contém o QR code
-    img = Image("grafico_2.png")
+    img = Image("./Imagens/grafico_2.png")
     
     # Adiciona a imagem à tabela, ancorada sobre a célula de coordenadas (2, 2) -> B2
     ws.add_image(img, ws.cell(2, 2).coordinate)
@@ -203,13 +203,13 @@ def inserir_grafico_3(wb, carteira, data_history):
     plt.grid(color="#DCDCDC", zorder=0) # Configura a exibição de linhas de grade
     plt.tick_params(which="both", direction="inout") # Define os parâmetros dos ticks
     fig.get_legend().remove() # Remove as legendas
-    plt.savefig("grafico_3.png", dpi=75, bbox_inches='tight') # Salva o gráfico gerado em "grafico_3.png"
+    plt.savefig("./Imagens/grafico_3.png", dpi=75, bbox_inches='tight') # Salva o gráfico gerado em "grafico_3.png"
     
     # Retira a exibição das linhas de grade da planilha
     ws.sheet_view.showGridLines = False
     
     # Abre a imagem gerada que contém o QR code
-    img = Image("grafico_3.png")
+    img = Image("./Imagens/grafico_3.png")
     
     # Adiciona a imagem à tabela, ancorada sobre a célula de coordenadas (2, 2) -> B2
     ws.add_image(img, ws.cell(2, 2).coordinate)
@@ -221,6 +221,10 @@ def inserir_qrcode(wb, valor_total_carteira):
     # Gera um QR Code a partir do "valor_total_carteira" e retorna o caminho até o arquivo gerado
     qrcode_path = qrcodeGenerator.gerar_qrcode(valor_total_carteira)
     
+    # Move a imagem gerada para a pasta "Imagens"
+    new_qrcode_path = "./Imagens/" + qrcode_path # Define o novo caminho até o arquivo
+    os.replace(qrcode_path, new_qrcode_path) # Move o arquivo
+    
     # Cria uma nova Worksheet chamada "QR Code"
     ws = wb.create_sheet(title="QR Code")
     
@@ -231,7 +235,7 @@ def inserir_qrcode(wb, valor_total_carteira):
     ws.cell(2, 2, value= "Aponte a câmera do celular para o QR Code abaixo e confira o valor total da sua carteira:")
     
     # Abre a imagem gerada que contém o QR code
-    img = Image(qrcode_path)
+    img = Image(new_qrcode_path)
     
     # Adiciona a imagem à tabela, ancorada sobre a célula de coordenadas (4, 3) -> C4
     ws.add_image(img, ws.cell(4, 3).coordinate)
@@ -243,6 +247,11 @@ def gerar_xlsx(carteira, data_history):
     
     # Insere uma tabela contendo um resumo dos dados da carteira
     valor_total_carteira = inserir_tabela_resumo(wb, carteira, data_history)
+    
+    # Checa se a pasta "Resultados" já existe no diretório
+    if not os.path.exists("Imagens"):
+        # Se ainda não existia, ela é criada
+        os.mkdir("Imagens")
     
     # Insere um gráfico representando a composição da carteira
     inserir_grafico_1(wb, carteira, data_history, valor_total_carteira)
