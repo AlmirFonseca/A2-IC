@@ -1,4 +1,3 @@
-from ast import Continue, Pass
 import yfinance as yf
 import pandas as pd
 from yahooquery import Ticker
@@ -26,20 +25,20 @@ from yahooquery import Ticker
 
 '''
 carteira_modelo = {
-    AMZN:{
+    "AMZN":{
         "ticker": "AMZN",
         "quantidade": 10,
         "tipo": "Ação",
         "nome": "Amazon.com, Inc.", 
-        "valor_unitário": 1254,
+        "valor_unitario": 1254,
         "valor_total": 12540
     }, 
-    STNE:{
+    "STNE":{
         "ticker": "STNE",
         "quantidade": 20,
         "tipo": "Ação",
         "nome": "StoneCo Ltd.", 
-        "valor_unitário": 1254,
+        "valor_unitario": 1254,
         "valor_total": 25080,
     },      
 }
@@ -70,9 +69,15 @@ carteira_modelo = {
 }
 
 
-def nova_carteira(carteira_modelo):
+def nova_carteira(carteira):
+    #listando as chaves do dicionario
+    lista_tickers = list(carteira.keys())
+    
+    #contando o número chaves
+    numero_tickers = len(carteira.keys())
+    
     #transformando a lista de chaves em string
-    string_nomes = ' '.join(list(carteira_modelo.keys()))
+    string_nomes = " ".join(lista_tickers)
 
     #utilizando o nome das chaves como Ticker de cada ativo
     info_tickers = Ticker(string_nomes)
@@ -81,30 +86,44 @@ def nova_carteira(carteira_modelo):
     dict_tickers_dados = info_tickers.price
 
     #looping para acessar os dados necessários através dos dicionário e atualizando o modelo para ser utilizado no próximo passo do projeto
-    for ticker in list(carteira_modelo.keys()):
+    for ticker in lista_tickers:
         try:
             nome_ticker = dict_tickers_dados[ticker]['shortName'] #KeyError nessa linha quando a chave estiver vazia! #TypeError para nome inválido!
         except KeyError:
-            del carteira_modelo[ticker] #destruir parte do dicionário afetada
-            Continue
+            del carteira[ticker] #destruir parte do dicionário afetada
+            continue
         except TypeError:
-            del carteira_modelo[ticker] #destruir parte do dicionário afetada
-            Continue
+            del carteira[ticker] #destruir parte do dicionário afetada
+            continue
         else:
             #caso não ocorra erros será executado normalmente
             nome_ticker = dict_tickers_dados[ticker]['shortName']
             valor_atualizado = dict_tickers_dados[ticker]['regularMarketPrice']
-            valor_total = valor_atualizado * carteira_modelo[ticker]["quantidade"]
+            valor_total = valor_atualizado * carteira[ticker]["quantidade"]
             dict_novo_dados = {"nome": nome_ticker, "valor_unitario": valor_atualizado, "valor_total": valor_total}
-            carteira_modelo[ticker].update(dict_novo_dados)
+            carteira[ticker].update(dict_novo_dados)
     #verificação da carteira caso ela seja vazia
-    if carteira_modelo == {}:
+    if carteira == {}:
         return("Alerta de dicionario vazio!")
     else:
+        #atualizando a lista de chaves do dicionario
+        lista_tickers = list(carteira.keys())
+        
         #resgatando os dados na forma de um dataframe de cada ticker
-        dados_historico = yf.download(list(carteira_modelo.keys()), period = "1y", interval="1d")
-        return carteira_modelo, dados_historico
+        data_download = yf.download(lista_tickers, period = "1y", interval="1d", progress=False)
+        
+        #criando um novo dataframe com on índices do antigo
+        dados_historico = pd.DataFrame(index=data_download.index)
+        
+        #preenchendo o novo dataframe com as colunas do antigo
+        if numero_tickers == 1: #se houver apenas 1 ticker
+            for ticker in lista_tickers:
+                dados_historico[ticker] = data_download["Close"] #o acesso se dá através de 1 chave
+        elif numero_tickers > 1: #se houver mais de 2 tickers
+            for ticker in lista_tickers:
+                dados_historico[ticker] = data_download["Close"][ticker] #o acesso se dá através de 2 chaves
+        
+        #retornando a carteira e o histórico de dados
+        return carteira, dados_historico
 
 print(nova_carteira(carteira_modelo))
-
-
