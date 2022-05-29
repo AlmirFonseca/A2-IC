@@ -90,8 +90,27 @@ carteira = {
     }
 }
 
-data_history = yf.download("AMZN STNE USDBRL=X EURBRL=X MSFT", period="1y", interval="1d")
+tickers = list(carteira.keys())
+tickers_str = " ".join(tickers)
+ticker_num = len(carteira.keys())
 
+if ticker_num == 0:
+    print("carteira vazia")
+    # TODO
+    # exibir uma mensagem ou salvar um xlsx com uma frase constando uma carteira vazia
+    #return 0
+    
+data_download = yf.download(tickers_str, period="1y", interval="1d")
+
+data_history = pd.DataFrame(index=data_download.index)
+
+if ticker_num == 1:
+    for ticker in tickers:
+        data_history[ticker] = data_download["Close"]
+elif ticker_num > 1:
+    for ticker in tickers:
+        data_history[ticker] = data_download["Close"][ticker]
+        
 # Define o número de linhas e colunas a serem "puladas" a partir do início da worksheet
 row_offset = 1
 column_offset = 1
@@ -185,13 +204,13 @@ ws = wb.create_sheet(title="Gráfico 2")
 df_graf2 = data_history.copy()
 
 # Acessa cada linha e processa os dados para a geração do gráfico
-for data in df_graf2["Close"]:
-    df_graf2["Close", data] /= first_non_nan(df_graf2["Close", data]) # Normaliza os valores conforme o primeiro valor não nulo
-    df_graf2["Close", data] *= 100 # Transforma a variação em dados percentuais
-    df_graf2["Close", data] -= 100 # Altera o offset, tornando o primeiro valor não nulo como 0, ou seja, como referência de comparação
+for column in df_graf2:
+    df_graf2[column] /= first_non_nan(df_graf2[column]) # Normaliza os valores conforme o primeiro valor não nulo
+    df_graf2[column] *= 100 # Transforma a variação em dados percentuais
+    df_graf2[column] -= 100 # Altera o offset, tornando o primeiro valor não nulo como 0, ou seja, como referência de comparação
 
 # Configura e realiza o plot do gráfico
-fig = df_graf2["Close"].plot(zorder=2) # Define os dados a serem plotados
+fig = df_graf2.plot(zorder=2) # Define os dados a serem plotados
 plt.title("Variação relativa dos ativos no último ano", fontdict={'fontsize': 20}, pad=20) # Define o título
 plt.ylabel("Variação Percentual", fontdict={'fontsize': 14}, labelpad=10) # Define o rótulo do eixo y
 plt.xlabel("Variação do tempo", fontdict={'fontsize': 14}, labelpad=10) # Define o rótulo do eixo x
@@ -231,7 +250,7 @@ for row_index in range(0, df_graf3.shape[0]):
     
     # Itera sobre o valor de cada ação, e acumula o total investido em cada ação na variável "valor_carteira_parcial"
     for ativo in ativos_carteira: 
-        valor_carteira_parcial += ativo.get("quantidade") * df_graf3["Close", ativo.get("ticker")][row_index]
+        valor_carteira_parcial += ativo.get("quantidade") * df_graf3[ativo.get("ticker")][row_index]
         
     # Após percorrer o valor de cada ativo, adiciona o valor acumulado à lista
     valores_total_carteira.append(valor_carteira_parcial)
@@ -290,5 +309,4 @@ filename = "./Resultados/Resultado - " + str(datetime.now().strftime("%d-%m-%Y %
 # Salva o WookBook
 wb.save(filename)
 
-# PROTEGER A TABELA?
-# RECEBER DO ABNER APENAS A COLUNA CLOSE
+# TODO PROTEGER A TABELA?
