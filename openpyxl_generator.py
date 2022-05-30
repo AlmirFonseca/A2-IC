@@ -213,6 +213,7 @@ def inserir_grafico_3(wb, carteira, data_history):
 
     # Adiciona a imagem à tabela, ancorada sobre a célula de coordenadas (2, 2) -> B2
     ws.add_image(img, ws.cell(2, 2).coordinate)
+    ws['A1'] = '* Nos dias em que alguma ação esteja com o valor nulo, não aparecerão dados no gráfico.'
 
 def inserir_qrcode(wb, valor_total_carteira):
     # Worksheet "QR Code"
