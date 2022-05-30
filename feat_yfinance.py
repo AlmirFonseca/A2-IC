@@ -33,6 +33,8 @@ def analisar_carteira(carteira):
         else:
             #caso não ocorra erros será executado normalmente
             nome_ticker = dict_tickers_dados[ticker]['shortName']
+            #retirando os espaços em branco a mais de certos tickers, como PETR4.SA
+            nome_ticker = " ".join(nome_ticker.split())
             valor_atualizado = dict_tickers_dados[ticker]['regularMarketPrice']
             valor_total = float(valor_atualizado) * float(carteira[ticker]["quantidade"])
             dict_novo_dados = {"nome": nome_ticker, "valor_unitario": valor_atualizado, "valor_total": valor_total}
