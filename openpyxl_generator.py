@@ -72,8 +72,8 @@ def inserir_tabela_resumo(wb, carteira, data_history):
         ws.cell(row=row_adjust(row_num), column=col_adjust(2), value=data_ativo.get("ticker"))
         ws.cell(row=row_adjust(row_num), column=col_adjust(3), value=data_ativo.get("tipo"))
         ws.cell(row=row_adjust(row_num), column=col_adjust(4), value=data_ativo.get("quantidade"))
-        ws.cell(row=row_adjust(row_num), column=col_adjust(5), value=round(data_ativo.get("valor_unitario"), 2)).number_format = "R$ #,###.00"
-        ws.cell(row=row_adjust(row_num), column=col_adjust(6), value=round(data_ativo.get("valor_total"), 2)).number_format = "R$ #,###.00"
+        ws.cell(row=row_adjust(row_num), column=col_adjust(5), value=round(data_ativo.get("valor_unitario"), 2)).number_format = "R$ #,##0.00"
+        ws.cell(row=row_adjust(row_num), column=col_adjust(6), value=round(data_ativo.get("valor_total"), 2)).number_format = "R$ #,##0.00"
 
     # Ajusta a largura das colunas da tabela segundo os valores da lista "column_widths"
     for i, column_width in enumerate(column_widths, col_adjust(1)):
@@ -85,7 +85,7 @@ def inserir_tabela_resumo(wb, carteira, data_history):
     ws.cell(row=row_adjust(len(carteira)+3), column=col_adjust(1)).alignment = Alignment(horizontal="center") # Centraliza o conteúdo
 
     # Imprime o valor total da carteira
-    ws.cell(row=row_adjust(len(carteira)+3), column=col_adjust(len(header)), value=round((valor_total_carteira), 2)).number_format = "R$ #,###.00"
+    ws.cell(row=row_adjust(len(carteira)+3), column=col_adjust(len(header)), value=round((valor_total_carteira), 2)).number_format = "R$ #,##0.00"
 
     # Retorna o valor total da carteira
     return valor_total_carteira
@@ -139,7 +139,7 @@ def inserir_grafico_2(wb, carteira, data_history):
     # Cria uma "deep copy" do dataframe que contém o histórico dos ativos
     df_graf2 = data_history.copy()
 
-    # Acessa cada linha e processa os dados para a geração do gráfico
+    # Acessa cada coluna e processa os dados para a geração do gráfico
     for column in df_graf2:
         df_graf2[column] /= first_non_nan(df_graf2[column]) # Normaliza os valores conforme o primeiro valor não nulo
         df_graf2[column] *= 100 # Transforma a variação em dados percentuais
