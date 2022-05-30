@@ -22,12 +22,12 @@ def moedas_from_soap(soup):
         if i%2 == 0:
             nome_moeda = itens[i].string
             # adiciona o itwm i + 1 por ser o valor da moeda que pegamos no teste para ver se é par.
-            quantidade_moeda = itens[i+1].string
+            quantidade_moeda = float(itens[i+1].string) if itens[i+1].string else None
             # formata no padrão desejado e adiciona no dict de todas as moedas.
             moeda = {
                 "ticker": nome_moeda,
                 "quantidade": quantidade_moeda,
-                "tipo": "moeda"
+                "tipo": "Moeda"
             }
             carteira_moedas[nome_moeda]=moeda
     return carteira_moedas
@@ -37,16 +37,15 @@ def moedas_from_soap(soup):
 def acoes_from_soap(soup):
     acoes = soup.find(class_="acao")
     itens = acoes.find_all("td")
-    tag = itens[0]
     carteira_acoes = {}
     for i in range(len(itens)):
         if i%2 == 0:
             nome_acao = itens[i].string
-            quantidade_acao = itens[i+1].string
+            quantidade_acao = float(itens[i+1].string) if itens[i+1].string else None
             acao = {
                 "ticker": nome_acao,
                 "quantidade": quantidade_acao,
-                "tipo": "ação"
+                "tipo": "Ação"
             }
             carteira_acoes[nome_acao]=acao
     return carteira_acoes
