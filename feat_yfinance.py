@@ -39,17 +39,15 @@ def analisar_carteira(carteira):
             #retirando os espaços em branco a mais de certos nomes, como o de PETR4.SA ("PETROBRAS   PN  EDJ N2")
             nome_ticker = " ".join(nome_ticker.split())
             
-            #adicionar a um dicionario a moeda em que o ativo é exibido, junto do ticker relacionado à sua cotação em Reais (BRL)
-            tipos_moedas_estrangeiras[unidade_moeda] = {"ticker_conversao_BRL": unidade_moeda.upper()+"BRL=X"}
-            
+            if unidade_moeda != "BRL":
+                #adicionar a um dicionario a moeda em que o ativo é exibido, junto do ticker relacionado à sua cotação em Reais (BRL)
+                tipos_moedas_estrangeiras[unidade_moeda] = {"ticker_conversao_BRL": unidade_moeda.upper()+"BRL=X"}
+                
             #calcular o valor total investido naquele ativo, na moeda padrão
             valor_total = float(valor_atualizado) * float(carteira[ticker]["quantidade"])
             #atualizar a carteira com os dados coletados a partir do yfinance
             dict_novo_dados = {"nome": nome_ticker, "valor_unitario": valor_atualizado, "valor_total": valor_total, "unidade_moeda": unidade_moeda}
             carteira[ticker].update(dict_novo_dados)
-    
-    # Remove a moeda BRL do dicionario, pois não queremos converter BRL para BRL
-    del tipos_moedas_estrangeiras["BRL"]
     
     # Retorna o dicionario que contém as moedas diferentes de BRL, com os seus tickers de valor em BRL e suas cotações atuais
     return carteira, tipos_moedas_estrangeiras
