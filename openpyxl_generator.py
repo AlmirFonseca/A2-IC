@@ -1,21 +1,46 @@
+# Importação de bibliotecas padrão
+import math
+import os
+from datetime import datetime
+
+# Importação de bibliotecas de terceiros
+import matplotlib.pyplot as plt
+import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles.alignment import Alignment
 from openpyxl.drawing.image import Image
 from openpyxl.utils import get_column_letter
+from openpyxl.styles import PatternFill, Border, Side, Font, NamedStyle
 
-import math
-import pandas as pd
-import os
-from datetime import datetime
-
+# Importação de bibliotecas locais
 import qrcodeGenerator
 
-import matplotlib.pyplot as plt
 plt.rcParams["figure.figsize"] = (15,6) # Define a proporção dos gráficos gerados
 
 # Define o número de linhas e colunas a serem "puladas" a partir do início da worksheet
 ROW_OFFSET = 1
 COLUMN_OFFSET = 1
+
+# Define estilizações individuais sobre a fonte, bordas, preenchimento e alinhamento de células
+fonte_rotulos = Font(name="Arial", bold=True)
+thin = Side(border_style="thin", color="000000")
+double = Side(border_style="medium", color="000000")
+borda_rotulos = Border(top=double, bottom=double)
+borda_dados = Border(top=thin, bottom=thin)
+preenchimento_rotulos = PatternFill("solid", fgColor="B0C0C0C0")
+alinhamento_centralizado = Alignment(horizontal="center", vertical="center")
+
+# Cria e configura uma estilização "estilo_rotulos", para ser usada nos rótulos da tabela
+estilo_rotulos = NamedStyle(name="estilo_rotulos")
+estilo_rotulos.alignment = alinhamento_centralizado # Centraliza o conteúdo
+estilo_rotulos.border = borda_rotulos
+estilo_rotulos.font = fonte_rotulos
+estilo_rotulos.fill = preenchimento_rotulos
+
+# Cria e configura uma estilização "estilo_dados", para ser usada nas linhas de dados da tabela
+estilo_dados = NamedStyle(name="estilo_dados")
+estilo_dados.alignment = alinhamento_centralizado
+estilo_dados.border = borda_dados
 
 # Translada a origem das linhas da tabela segundo o valor definido por "ROW_OFFSET"
 def row_adjust(row_value_without_offset):
@@ -45,15 +70,19 @@ def inserir_tabela_resumo(wb, carteira, data_history):
 
     # Lista das larguras de cada coluna da tabela
     column_widths = [40, 15, 15, 15, 25, 25]
-
+    
     # Cria o cabeçalho de uma tabela
     ws.merge_cells(start_row=row_adjust(1), start_column=col_adjust(1), end_row=row_adjust(1), end_column=col_adjust(len(header))) # Merge as células imediatamente acima da tabela
+    for i in range(1, len(header)+1):
+        merged_cells = ws.cell(row=row_adjust(1), column=col_adjust(i))
+        merged_cells.style = estilo_rotulos # Estiliza a célula como "estilo_rotulos"
+    
     ws.cell(row=row_adjust(1), column=col_adjust(1), value="Ativos") # Define o texto da célula
-    ws.cell(row=row_adjust(1), column=col_adjust(1)).alignment = Alignment(horizontal="center") # Centraliza o conteúdo
 
     # Preenche o cabeçalho da tabela a partir da lista "header"
     for head in header:
-        ws.cell(row=row_adjust(2), column=col_adjust(header.index(head)+1), value=head)
+        header_cell = ws.cell(row=row_adjust(2), column=col_adjust(header.index(head)+1), value=head)
+        header_cell.style = estilo_rotulos # Estiliza a célula como "estilo_rotulos"
 
     # Inicializa uma variável que acumulará o valor total da carteira
     valor_total_carteira = 0
@@ -72,20 +101,40 @@ def inserir_tabela_resumo(wb, carteira, data_history):
         ws.cell(row=row_adjust(row_num), column=col_adjust(2), value=data_ativo.get("ticker"))
         ws.cell(row=row_adjust(row_num), column=col_adjust(3), value=data_ativo.get("tipo"))
         ws.cell(row=row_adjust(row_num), column=col_adjust(4), value=data_ativo.get("quantidade"))
-        ws.cell(row=row_adjust(row_num), column=col_adjust(5), value=round(data_ativo.get("valor_unitario"), 2)).number_format = "R$ #,##0.00"
-        ws.cell(row=row_adjust(row_num), column=col_adjust(6), value=round(data_ativo.get("valor_total"), 2)).number_format = "R$ #,##0.00"
+        ws.cell(row=row_adjust(row_num), column=col_adjust(5), value=round(data_ativo.get("valor_unitario"), 2))
+        ws.cell(row=row_adjust(row_num), column=col_adjust(6), value=round(data_ativo.get("valor_total"), 2))
+
+        # Estiliza todas as células de uma linha de dados como o "estilo_dados"
+        for i in range(1, 7):
+            data_cell = ws.cell(row=row_adjust(row_num), column=col_adjust(i))
+            data_cell.style = estilo_dados
+        
+        # Define o number_format das células que contém valores monetários, para que sejam exibidos como, por exemplo, "R$ 4.059,90"
+        for i in range(5, 7):
+            data_cell = ws.cell(row=row_adjust(row_num), column=col_adjust(i))
+            data_cell.number_format = "R$ #,##0.00"
 
     # Ajusta a largura das colunas da tabela segundo os valores da lista "column_widths"
     for i, column_width in enumerate(column_widths, col_adjust(1)):
         ws.column_dimensions[get_column_letter(i)].width = column_width
 
-    # Prepara a última linha da tabela
+    # Estiliza a última linha da tabela como "estilo_rotulos"
     ws.merge_cells(start_row=row_adjust(len(carteira)+3), start_column=col_adjust(1), end_row=row_adjust(len(carteira)+3), end_column=col_adjust(len(header)-1)) # Merge as células imediatamente acima da tabela
+    for i in range(1, col_adjust(len(header)-1)):
+        merged_cells = ws.cell(row=row_adjust(len(carteira)+3), column=col_adjust(i))
+        merged_cells.style = estilo_rotulos
+    
     ws.cell(row=row_adjust(len(carteira)+3), column=col_adjust(1), value="Valor total da carteira") # Define o texto da célula
-    ws.cell(row=row_adjust(len(carteira)+3), column=col_adjust(1)).alignment = Alignment(horizontal="center") # Centraliza o conteúdo
 
-    # Imprime o valor total da carteira
-    ws.cell(row=row_adjust(len(carteira)+3), column=col_adjust(len(header)), value=round((valor_total_carteira), 2)).number_format = "R$ #,##0.00"
+    # Adiciona à tabela o valor total da carteira
+    wallet_value_cell = ws.cell(row=row_adjust(len(carteira)+3), column=col_adjust(len(header)), value=round((valor_total_carteira), 2))
+    # Estiliza a célula como "estilo_rotulos"
+    wallet_value_cell.style = estilo_rotulos
+    # Define o number_format da células que contém o valor total da carteira, para que seja exibido como, por exemplo, "R$ 4.059,90"
+    wallet_value_cell.number_format = "R$ #,##0.00"
+    
+    # Retira a exibição das linhas de grade da planilha
+    ws.sheet_view.showGridLines = False
 
     # Retorna o valor total da carteira
     return valor_total_carteira
@@ -124,7 +173,7 @@ def inserir_grafico_1(wb, carteira, data_history, valor_total_carteira):
     # Retira a exibição das linhas de grade da planilha
     ws.sheet_view.showGridLines = False
 
-    # Abre a imagem gerada que contém o QR code
+    # Abre a imagem gerada que contém o gráfico
     img = Image("./Imagens/grafico_1.png")
 
     # Adiciona a imagem à tabela, ancorada sobre a célula de coordenadas (2, 2) -> B2
@@ -160,7 +209,7 @@ def inserir_grafico_2(wb, carteira, data_history):
     # Retira a exibição das linhas de grade da planilha
     ws.sheet_view.showGridLines = False
 
-    # Abre a imagem gerada que contém o QR code
+    # Abre a imagem gerada que contém o gráfico
     img = Image("./Imagens/grafico_2.png")
 
     # Adiciona a imagem à tabela, ancorada sobre a célula de coordenadas (2, 2) -> B2
@@ -208,7 +257,7 @@ def inserir_grafico_3(wb, carteira, data_history):
     # Retira a exibição das linhas de grade da planilha
     ws.sheet_view.showGridLines = False
 
-    # Abre a imagem gerada que contém o QR code
+    # Abre a imagem gerada que contém o gráfico
     img = Image("./Imagens/grafico_3.png")
 
     # Adiciona a imagem à tabela, ancorada sobre a célula de coordenadas (2, 2) -> B2
