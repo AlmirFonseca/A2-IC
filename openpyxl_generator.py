@@ -5,6 +5,7 @@ from datetime import datetime
 
 # Importação de bibliotecas de terceiros
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles.alignment import Alignment
@@ -159,14 +160,32 @@ def inserir_grafico_1(wb, carteira, data_history, valor_total_carteira):
     df_graf1 = pd.DataFrame(index=ativos, data=participacao_percentual)
     # Ordena o DataFrame em ordem decrescente de participação
     df_graf1 = df_graf1.sort_values(df_graf1.columns[0], ascending=False)
-
+    
+    # Atualiza a as listas de dados, agora, já ordenados
+    ativos = df_graf1.index.to_list()
+    participacao_percentual = df_graf1[0].to_list()
+    
+    # Define as cores a serem usadas para representar ações e moedas no gráfico
+    cor_acao = "#D62828"
+    cor_moeda = "#003049"
+    
     # Configura e realiza o plot do gráfico
-    fig = df_graf1.plot(kind="bar", zorder=2) # Define os dados a serem plotados
+    fig, ax = plt.subplots()
+    fig = plt.bar(ativos, participacao_percentual, zorder=2)
+    # Itera sobre os ativos, colorindo cada coluna com a cor relacionada ao seu tipo
+    for i in range(0, len(ativos)):
+        ativo = ativos[i]
+        if(carteira.get(ativo).get("tipo") == "Ação"):
+            fig[i].set_color(cor_acao)
+        elif(carteira.get(ativo).get("tipo") == "Moeda"):
+            fig[i].set_color(cor_moeda)
     plt.title("Composição percentual da carteira em relação ao valor absoluto", fontdict={'fontsize': 20}, pad=20) # Define o título
     plt.ylabel("Participação percentual no valor total da carteira", fontdict={'fontsize': 14}, labelpad=10) # Define o rótulo do eixo y
     plt.xlabel("Ativos", fontdict={'fontsize': 14}, labelpad=10) # Define o rótulo do eixo x
     plt.grid(color="#DCDCDC", axis="y", zorder=0) # Configura a exibição de linhas de grade
-    fig.get_legend().remove() # Remove as legendas
+    # Gera uma legenda manualmente
+    custom_lines = [Line2D([0], [0], color=cor_acao, lw=4), Line2D([0], [0], color=cor_moeda, lw=4)]
+    ax.legend(custom_lines, ["Ação", "Moeda"])
 
     plt.savefig("./Imagens/grafico_1.png", dpi=75, bbox_inches='tight') # Salva o gráfico gerado em "grafico_1.png"
 
