@@ -1,3 +1,4 @@
+import os
 from scrapping import constroi_objeto_carteira
 from feat_yfinance import analisar_carteira, obter_historico_ativos, converter_valores_BRL
 from openpyxl_generator import gerar_xlsx
@@ -23,4 +24,7 @@ else:
         converter_valores_BRL(carteira, historico_carteira, tipos_moedas_estrangeiras)
 
     #Função que gera os resultados a partir da carteira atual e do histórico gerado anteriormente.
-    gerar_xlsx(carteira, historico_carteira)
+    caminho_arquivo_resultados = gerar_xlsx(carteira, historico_carteira)
+    
+    # Abre o arquivo de resultados gerado pela função anterior
+    #os.startfile(caminho_arquivo_resultados)

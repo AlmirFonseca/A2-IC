@@ -326,4 +326,4 @@ def gerar_xlsx(carteira, data_history):
     # Salva o WookBook
     wb.save(filename)
 
-    return 0
+    return os.path.abspath(filename)
