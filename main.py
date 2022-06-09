@@ -31,7 +31,7 @@ else:
     caminho_arquivo_resultados = gerar_xlsx(carteira, historico_carteira)
     
     # Imprime o local onde está salvo o arquivo gerado a partir da análise da carteira
-    print("Os resultados da análise da sua carteira foram gerados e se encontram em: \n", caminho_arquivo_resultados)
+    print("Os resultados da análise da sua carteira foram gerados e se encontram em:", caminho_arquivo_resultados, sep="\n")
     
     # Abre o arquivo de resultados gerado pela função anterior
     #os.startfile(caminho_arquivo_resultados)

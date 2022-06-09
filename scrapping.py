@@ -18,7 +18,7 @@ def get_carteira_from_url(url):
     return soup
 
 # Função que recebe soup já parseado e retorna carteira formatada de moedas
-def moedas_from_soap(soup):
+def moedas_from_soup(soup):
     # Dicionario que armazenará os dados obtidos sobre as moedas da carteira
     carteira_moedas = {}
     # Pega todos os objetos do html dentro da class moeda
@@ -49,7 +49,7 @@ def moedas_from_soap(soup):
 
 # Função que recebe soup já parseado e retorna carteira formatada de ações
 ## Utilização e comentários idênticos ao anterior apenas utilizando ações ao invés de moedas.
-def acoes_from_soap(soup):
+def acoes_from_soup(soup):
     carteira_acoes = {}
     acoes = soup.find(class_="acao")
     if acoes == None:
@@ -74,9 +74,9 @@ def constroi_objeto_carteira(url):
     # Função que retorna soup formatado
     soup = get_carteira_from_url(url)
     # Função que retorna carteira de moedas (dict)
-    moedas = moedas_from_soap(soup)
+    moedas = moedas_from_soup(soup)
     # Função que retorna carteira de acoes (dict)
-    acoes = acoes_from_soap(soup)
+    acoes = acoes_from_soup(soup)
     # método para juntar 2 dicionários, obtendo 1 dict apenas no fim.
     carteira = {**acoes, **moedas}
     return carteira

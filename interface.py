@@ -22,7 +22,7 @@ def entrada_url():
         
         # Se a URL for válida, a função a retorna
         if url_valida == True:
-            print("\nAguarde. Estamos analisando sua carteira...")
             return url_entrada
+            print("\nAguarde. Estamos analisando sua carteira...\n")
         else:
             print("\nURL inválida! Por favor, tente novamente")
