@@ -1,10 +1,18 @@
 import requests
+import sys
 from bs4 import BeautifulSoup
 
 # Função recebendo url da página a ser mapeada e respondendo o soup dela
 def get_carteira_from_url(url):
-    # Fazendo request para obter o response da págima
-    response = requests.get(url)
+    try:
+        # Fazendo request para obter o response da págima
+        response = requests.get(url)
+        # Levanta certas exceções, caso o request seja realizado com sucesso, mas retorne algum código de erro
+        response.raise_for_status()
+    except:
+        print("Ocorreu um erro enquanto acessávamos a página a partir da URL inserida")
+        sys.exit(0)
+        
     # Utilizando p BeatifulSoup para ter o conteúdo do html de mais fácil manejo
     soup = BeautifulSoup(response.content, "html.parser")
     return soup
