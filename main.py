@@ -18,7 +18,7 @@ carteira, tipos_moedas_estrangeiras = analisar_carteira(carteira)
 
 # Caso, após a análise, não restem ativos válidos na carteira
 if len(carteira) == 0:
-    print("Não há ativos válidos na carteira. Nenhum resultado foi produzido.")
+    print("Não foram reconhecidos ativos válidos na carteira. Nenhum resultado foi produzido.")
 else:
     # Funções que constroe o histórico de valores dos ativos a partir da lib yfinance
     historico_carteira = obter_historico_ativos(carteira)
