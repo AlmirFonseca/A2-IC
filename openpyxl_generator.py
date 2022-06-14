@@ -159,11 +159,11 @@ def inserir_grafico_1(wb, carteira, data_history, valor_total_carteira):
     # Converte as duas listas em um pandas.DataFrame
     df_graf1 = pd.DataFrame(index=ativos, data=participacao_percentual)
     # Ordena o DataFrame em ordem decrescente de participação
-    df_graf1 = df_graf1.sort_values(df_graf1.columns[0], ascending=False)
+    df_graf1_sorted = df_graf1.sort_values(df_graf1.columns[0], ascending=True)
     
     # Atualiza a as listas de dados, agora, já ordenados
-    ativos = df_graf1.index.to_list()
-    participacao_percentual = df_graf1[0].to_list()
+    ativos = df_graf1_sorted.index.to_list()
+    participacao_percentual = df_graf1_sorted[0].to_list()
     
     # Define as cores a serem usadas para representar ações e moedas no gráfico
     cor_acao = "#D62828"
@@ -171,7 +171,7 @@ def inserir_grafico_1(wb, carteira, data_history, valor_total_carteira):
     
     # Configura e realiza o plot do gráfico
     fig, ax = plt.subplots()
-    fig = plt.bar(ativos, participacao_percentual, zorder=2)
+    fig = plt.barh(ativos, participacao_percentual, zorder=2)
     # Itera sobre os ativos, colorindo cada coluna com a cor relacionada ao seu tipo
     for i in range(0, len(ativos)):
         ativo = ativos[i]
@@ -182,10 +182,10 @@ def inserir_grafico_1(wb, carteira, data_history, valor_total_carteira):
     plt.title("Composição percentual da carteira em relação ao valor absoluto", fontdict={'fontsize': 20}, pad=20) # Define o título
     plt.ylabel("Participação percentual no valor total da carteira", fontdict={'fontsize': 14}, labelpad=10) # Define o rótulo do eixo y
     plt.xlabel("Ativos", fontdict={'fontsize': 14}, labelpad=10) # Define o rótulo do eixo x
-    plt.grid(color="#DCDCDC", axis="y", zorder=0) # Configura a exibição de linhas de grade
+    plt.grid(color="#DCDCDC", axis="x", zorder=0) # Configura a exibição de linhas de grade
     # Gera uma legenda manualmente
     custom_lines = [Line2D([0], [0], color=cor_acao, lw=4), Line2D([0], [0], color=cor_moeda, lw=4)]
-    ax.legend(custom_lines, ["Ação", "Moeda"])
+    ax.legend(custom_lines, ["Ação", "Moeda"], loc=4)
 
     plt.savefig("./Imagens/grafico_1.png", dpi=75, bbox_inches='tight') # Salva o gráfico gerado em "grafico_1.png"
 
