@@ -7,6 +7,11 @@
   font-family: 'Open Sans';
 }
 
+html{
+  height: 100%;
+  background-color: #14213D;
+}
+
 body {
   background-color: #FFFFFF;
   margin: 0;
@@ -15,7 +20,7 @@ body {
 header {
   color: white;
   background-color: #14213D;
-  padding: 5vh 10vw;
+  padding: 5vh 10vw 0 10vw;
 }
 
 h1 {
@@ -75,6 +80,32 @@ h1, h3 {
   text-shadow: 2px 2px 4px #000000;
 }
 
-h2, th {
+h2, th , .navbar a{
   text-shadow: 0.5px 0.5px 2px rgba(0, 0, 0, 0.3);
+}
+
+.navbar {
+  overflow: hidden;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.navbar a {
+  float: left;
+  color: #FFFFFF;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.navbar a:hover {
+  background-color: #E2E4E7;
+  color: #14213D;
+}
+
+.navbar a.active {
+  background-color: #FFFFFF;
+  color: #14213D;
 }
