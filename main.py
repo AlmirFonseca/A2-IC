@@ -1,4 +1,4 @@
-import os
+import subprocess, sys
 from ferramentas import constroi_objeto_carteira, gerar_xlsx, analisar_carteira, obter_historico_ativos, converter_valores_BRL
 from interface import entrada_url
 
@@ -35,5 +35,6 @@ else:
     # Imprime o local onde está salvo o arquivo gerado a partir da análise da carteira
     print("Os resultados da análise da sua carteira foram gerados e se encontram em:", caminho_arquivo_resultados, sep="\n")
     
-    # Abre o arquivo de resultados gerado pela função anterior
-    os.startfile(caminho_arquivo_resultados)
+    # Abre o arquivo de resultados gerado pela função anterior testando a plataforma para funcionar em linux ou windows
+    opener = "open" if sys.platform == "darwin" else "xdg-open"
+    subprocess.call([opener, caminho_arquivo_resultados])
