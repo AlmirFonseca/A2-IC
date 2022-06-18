@@ -14,7 +14,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.styles import PatternFill, Border, Side, Font, NamedStyle
 
 # Importação de bibliotecas locais
-import qrcodeGenerator
+import ferramentas.qrcodeGenerator as qrcodeGenerator
 
 plt.rcParams["figure.figsize"] = (15,6) # Define a proporção dos gráficos gerados
 

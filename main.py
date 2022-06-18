@@ -1,8 +1,10 @@
 import os
-from scrapping import constroi_objeto_carteira
-from feat_yfinance import analisar_carteira, obter_historico_ativos, converter_valores_BRL
-from openpyxl_generator import gerar_xlsx
-from interface import cabecalho, entrada_url
+from ferramentas import constroi_objeto_carteira, gerar_xlsx, analisar_carteira, obter_historico_ativos, converter_valores_BRL
+from interface import entrada_url
+
+
+# Define a string a ser impressa como cabeçalho no terminal
+cabecalho = "\n" + "*"*20 + " Analisador de investimentos " + "*"*20 + "\n"
 
 # Imprime um cabeçalho no terminal
 print(cabecalho)

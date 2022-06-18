@@ -1,8 +1,5 @@
 import validators
 
-# Define a string a ser impressa como cabeçalho no terminal
-cabecalho = "\n" + "*"*20 + " Analisador de investimentos " + "*"*20 + "\n"
-
 # Função que recebe entrada de url e checa a sua validez
 def entrada_url():
     # Inicializa uma variável sentinela, que irá controlar a repetição abaixo
